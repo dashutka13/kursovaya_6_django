@@ -1,0 +1,43 @@
+{% extends 'emailing/base.html' %}
+
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Управление рассылками</h1>
+
+    </div>
+</section>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-5">
+            <a type="button" class="btn btn-sm btn-outline-danger" href="{% url 'emailing:create_emailing' %}">Создать
+                рассылку</a>
+        </div>
+    </div>
+</div>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for object in object_list %}
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ object.subject }}</h5>
+                        <p class="card-text">{{ object.send_periodicity }}</p>
+                        <p class="card-text">{{ object.time_to_send }}</p>
+                        <p class="card-text">Владелец {{ object.emailing_owner }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'emailing:emailing_detail' object.pk %}" type="button"
+                               class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                            <small class="text-muted">{{ object.emailing_status }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

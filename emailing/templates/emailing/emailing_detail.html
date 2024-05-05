@@ -1,0 +1,39 @@
+{% extends 'emailing/base.html' %}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Тема рассылки</th>
+        <th>Сообщение</th>
+        <th>Время рассылки</th>
+        <th>Периодичность</th>
+        <th>Статус</th>
+        <th>Подписчики</th>
+        <th>Владелец</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ object.subject }}</td>
+        <td>{{ object.body }}</td>
+        <td>{{ object.time_to_send }}</td>
+        <td>{{ object.send_periodicity }}</td>
+        <td>{{ object.emailing_status }}</td>
+        <td>
+            <ul>
+                {% for client in emailing.emailing_clients.all %}
+                <li>{{ client.email }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+        <td>{{ object.emailing_owner }}</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="text-center">
+    <a href="{% url 'emailing:emailing_update' object.pk %}" class="btn btn-primary">Редактировать</a>
+    <a href="{% url 'emailing:emailing_delete' object.pk %}" class="btn btn-danger">Удалить</a>
+</div>
+{% endblock %}
