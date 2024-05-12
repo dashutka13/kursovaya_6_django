@@ -4,12 +4,12 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from emailing.forms import EmailingForm, ClientForm, Text_MessagesForm
-from emailing.models import Emailing, Client, Text_Messages
+from emailing.forms import EmailingForm, ClientForm, MessagesForm
+from emailing.models import Emailing, Client, Messages
 
 
-class Text_MessagesListView(ListView):
-    model = Text_MessagesForm
+class MessagesListView(ListView):
+    model = Messages
     success_url = reverse_lazy('emailing:message_list')
     extra_context = {
         'title': 'Сообщения'
@@ -26,10 +26,10 @@ class Text_MessagesListView(ListView):
         return queryset
 
 
-class Text_MessagesCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class MessagesCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """Создание сообщения"""
-    model = Text_Messages
-    form_class = Text_MessagesForm
+    model = Messages
+    form_class = MessagesForm
     extra_context = {
         'title': 'Добавление сообщения'
     }
@@ -54,10 +54,10 @@ class Text_MessagesCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         return redirect(reverse_lazy('emailing:message_list'))
 
 
-class Text_MessagesUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class MessagesUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Редактирование рассылки"""
-    model = Text_Messages
-    form_class = Text_MessagesForm
+    model = Messages
+    form_class = MessagesForm
     extra_context = {
         'title': 'Редактирование сообщения'
     }
@@ -77,9 +77,9 @@ class Text_MessagesUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateVie
         return reverse('emailing:message_detail', args=[self.object.pk])
 
 
-class Text_MessagesDetailView(DetailView, UserPassesTestMixin):
+class MessagesDetailView(DetailView, UserPassesTestMixin):
     """Детали сообщения"""
-    model = Text_Messages
+    model = Messages
     extra_context = {
         'title': 'Детали сообщения'
     }
@@ -96,9 +96,9 @@ class Text_MessagesDetailView(DetailView, UserPassesTestMixin):
         return redirect(reverse_lazy('emailing:message_list'))
 
 
-class Text_MessagesDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class MessagesDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление сообщения"""
-    model = Text_Messages
+    model = Messages
     success_url = reverse_lazy('emailing:message_list')
     extra_context = {
         'title': 'Удаление рассылки'

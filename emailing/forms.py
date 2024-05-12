@@ -1,6 +1,6 @@
 from django import forms
 
-from emailing.models import Client, Emailing, Text_Messages
+from emailing.models import Client, Emailing, Messages
 
 
 class StyleFormMixin:
@@ -11,11 +11,11 @@ class StyleFormMixin:
                 field.widget.attrs['class'] = 'form-control'
 
 
-class Text_MessagesForm(StyleFormMixin, forms.ModelForm):
+class MessagesForm(StyleFormMixin, forms.ModelForm):
     """Форма сообщения"""
 
     class Meta:
-        model = Text_Messages
+        model = Messages
         fields = ["topic", "body", "owner"]
 
 

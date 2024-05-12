@@ -3,7 +3,7 @@
 {% block content %}
 <section class="jumbotron text-center">
     <div class="container">
-        <h1 class="jumbotron-heading">Сообщения</h1>
+        <h1 class="jumbotron-heading">Управление сообщениями</h1>
 
     </div>
 </section>
@@ -11,55 +11,30 @@
 <div class="container">
     <div class="row">
         <div class="col-12 mb-5">
-            <a type="button" class="btn btn-sm btn-outline-danger" href="{% url 'emailing:message_create' %}">Добавить
-                сообщение</a>
+            <a type="button" class="btn btn-sm btn-outline-danger" href="{% url 'emailing:create_emailing' %}">Создать
+                новое сообщение</a>
         </div>
-    </div>/q
-    dfgfrefgv
+    </div>
 </div>
 <div class="album py-5 bg-light">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <div class="table-responsive small">
-                <table class="table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Тема</th>
-                        {% if perms.emailing.view_messages %}
-                        <th scope="col">Детали</th>
-                        {% endif %}
-                        {% if perms.emailing.change_messages %}
-                        <th scope="col">Редактировать</th>
-                        {% endif %}
-                        {% if perms.emailing.delete_messages %}
-                        <th scope="col">Удалить</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    {% for m in Messages %}
-                    <tbody>
-                    <tr>
-                        <td>{{ m.pk }}</td>
-                        <td>{{ m.topic }}</td>
-                        {% if perms.emailing.view_messages %}
-                        <td><a href="{% url 'emailing:message_detail' m.pk %}"
-                               class="btn btn-sm btn-outline-secondary">Детали</a></td>
-                        {% endif %}
-                        {% if perms.emailing.change_messages %}
-                        <td><a href="{% url 'emailing:message_update' m.pk %}"
-                               class="btn btn-sm btn-outline-secondary">Редактировать</a></td>
-                        {% endif %}
-                        {% if perms.emailing.delete_messages %}
-                        <td><a href="{% url 'emailing:message_delete' m.pk %}"
-                               class="btn btn-sm btn-outline-secondary">Удалить</a></td>
-                        {% endif %}
-                    </tr>
-                    </tbody>
-                    {% endfor %}
-                </table>
+            {% for object in object_list %}
+            <div class="col-md-4">
+                <div class="card mb-4 box-shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ object.topic }}</h5>
+                        <p class="card-text">Владелец {{ object.owner }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'emailing:message_detail' object.pk %}" type="button"
+                               class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
+
 {% endblock %}

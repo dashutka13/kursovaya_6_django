@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from emailing.models import Emailing, Client, EmailingLog, Text_Messages
+from emailing.models import Emailing, Client, EmailingLog, Messages
 
 
 @admin.register(Client)
@@ -26,7 +26,7 @@ class EmailingLogAdmin(admin.ModelAdmin):
     search_fields = ('log_status', 'log_emailing')
 
 
-@admin.register(Text_Messages)
+@admin.register(Messages)
 class MessagesAdmin(admin.ModelAdmin):
     list_display = ('topic', )
     list_filter = ('topic',)

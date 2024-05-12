@@ -5,7 +5,7 @@ from config import settings
 NULLABLE = {'blank': True, 'null': True}
 
 
-class Text_Messages(models.Model):
+class Messages(models.Model):
     """Модель сообщения"""
     topic = models.CharField(max_length=50, verbose_name="тема письма", null=False, blank=False, unique=True)
     body = models.TextField(max_length=500, verbose_name="тело письма", null=False, blank=False)
@@ -56,7 +56,7 @@ class Emailing(models.Model):
     send_periodicity = models.CharField(choices=PERIODS, verbose_name='периодичность')
     emailing_status = models.CharField(choices=STATUSES, default='создана', verbose_name='статус')
     emailing_clients = models.ManyToManyField(Client, verbose_name='клиенты')
-    message = models.ForeignKey(Text_Messages, on_delete=models.SET_NULL, **NULLABLE)
+    message = models.ForeignKey(Messages, on_delete=models.SET_NULL, **NULLABLE)
     emailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='владелец',
                                        null=True)
     is_published = models.BooleanField(default=True, verbose_name='опубликовано')
