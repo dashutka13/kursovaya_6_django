@@ -9,7 +9,7 @@ from config.settings import EMAIL_HOST_USER
 def send_mailings():
     current_time = datetime.datetime.now(pytz.timezone(TIME_ZONE))
     for mailing in Emailing.objects.filter(emailing_status='создана'):
-        recipients = [client.client_email for client in mailing.client_email.all()]
+        recipients = [client.email for client in mailing.email.all()]
 
         if mailing.send_periodicity == 'daily' and current_time.hour == mailing.time_to_send.hour and current_time.minute == mailing.time_to_send.minute:
             message = mailing.message_set.all()
