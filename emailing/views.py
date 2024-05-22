@@ -10,7 +10,6 @@ from emailing.models import Emailing, Client, Messages
 
 class MessagesListView(ListView):
     model = Messages
-    success_url = reverse_lazy('emailing:message_list')
     extra_context = {
         'title': 'Сообщения'
     }
@@ -21,7 +20,7 @@ class MessagesListView(ListView):
             queryset = super().get_queryset()
         else:
             queryset = super().get_queryset().filter(
-                emailing_owner=user.pk
+                owner=user.pk
             )
         return queryset
 
