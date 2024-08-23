@@ -11,7 +11,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Emailing)
 class EmailingAdmin(admin.ModelAdmin):
-    list_display = ('time_to_send', 'send_periodicity', 'emailing_status', 'display_mailing_clients')
+    list_display = ('start_time', 'send_periodicity', 'emailing_status', 'display_mailing_clients')
     search_fields = ('send_periodicity', 'emailing_status', 'emailing_clients')
 
     def display_mailing_clients(self, obj):
@@ -22,8 +22,8 @@ class EmailingAdmin(admin.ModelAdmin):
 
 @admin.register(EmailingLog)
 class EmailingLogAdmin(admin.ModelAdmin):
-    list_display = ('created_time', 'log_status', 'log_emailing', 'response')
-    search_fields = ('log_status', 'log_emailing')
+    list_display = ('last_try', 'log_status', 'response',)
+    search_fields = ('log_status',)
 
 
 @admin.register(Messages)

@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from emailing.forms import EmailingForm, ClientForm, MessagesForm
-from emailing.models import Emailing, Client, Messages
+from emailing.models import Emailing, Client, Messages, EmailingLog
 
 
 class MessagesListView(ListView):
@@ -337,3 +337,8 @@ class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def handle_no_permission(self):
         return redirect(reverse_lazy('emailing:emailing_list'))
+
+
+class EmailingLogListView(LoginRequiredMixin, ListView):
+    model = EmailingLog
+    template_name = 'emailing/emailing_logs.html'

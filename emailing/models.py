@@ -8,8 +8,8 @@ NULLABLE = {'blank': True, 'null': True}
 class Messages(models.Model):
     """Модель сообщения"""
     topic = models.CharField(max_length=50, verbose_name="тема письма", null=False, blank=False, unique=True)
-    body = models.TextField(max_length=500, verbose_name="тело письма", null=False, blank=False)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    body = models.TextField(verbose_name="тело письма", null=False, blank=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name="Владелец")
 
     def __str__(self):
         return self.topic
@@ -29,7 +29,7 @@ class Client(models.Model):
 
     def __str__(self):
         """Возвращает email клиента"""
-        return self.email
+        return f'{self.full_name} - {self.email}'
 
     class Meta:
         verbose_name = 'клиент'
@@ -38,55 +38,72 @@ class Client(models.Model):
 
 class Emailing(models.Model):
     """Модель рассылки"""
+    PERIOD_DAILY = "Ежедневно"
+    PERIOD_WEEKLY = "weekly"
+    PERIOD_MONTHLY = "monthly"
 
     PERIODS = (
-        ("ежедневно", "daily"),
-        ("еженедельно", "weekly"),
-        ("ежемесячно", "monthly"),
+        ("PERIOD_DAILY", "ежедневно"),
+        ("PERIOD_WEEKLY", "еженедельно"),
+        ("PERIOD_MONTHLY", "ежемесячно"),
     )
 
+    STATUS_CREATED = "created"
+    STATUS_STARTED = "started"
+    STATUS_DONE = "done"
+
     STATUSES = (
-        ('завершена', 'завершена'),
-        ('создана', 'создана'),
-        ('запущена', 'запущена'),
+        ('STATUS_DONE', 'завершена'),
+        ('STATUS_CREATED', 'создана'),
+        ('STATUS_STARTED', 'запущена'),
     )
 
     title = models.CharField(max_length=100, verbose_name='название рассылки', unique=True, **NULLABLE)
-    time_to_send = models.TimeField(verbose_name='время рассылки')
-    send_periodicity = models.CharField(choices=PERIODS, verbose_name='периодичность')
-    emailing_status = models.CharField(choices=STATUSES, default='создана', verbose_name='статус')
-    emailing_clients = models.ManyToManyField(Client, verbose_name='клиенты')
+    start_time = models.DateTimeField(verbose_name="Время начала", **NULLABLE)
+    end_time = models.DateTimeField(verbose_name="Время завершения", **NULLABLE)
+    send_periodicity = models.CharField(choices=PERIODS, default=PERIOD_DAILY, verbose_name='периодичность')
+    emailing_status = models.CharField(choices=STATUSES, default=STATUS_CREATED, verbose_name='статус')
+    emailing_clients = models.ManyToManyField(Client, related_name="mailing_settings", verbose_name='клиенты')
     message = models.ForeignKey(Messages, on_delete=models.SET_NULL, **NULLABLE)
     emailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='владелец',
                                        null=True)
-    is_published = models.BooleanField(default=True, verbose_name='опубликовано')
 
     def __str__(self):
-        return f'Рассылка {self.subject} в {self.time_to_send} ({self.send_periodicity})'
+        return f'Рассылка {self.title} в {self.start_time} ({self.send_periodicity})'
 
     class Meta:
         verbose_name = 'рассылка'
         verbose_name_plural = 'рассылки'
         permissions = [
-            ('set_mailing_status', 'Can change the status of mailing'),
+            ("switch_status", "изменение статуса"),
+            ("view_mailing", "отображать рассылки")
         ]
 
 
 class EmailingLog(models.Model):
     """Модель статистики рассылок"""
+    STATUS_OK = "ok"
+    STATUS_FAILED = "failed"
+
     STATUS_ATTEMPT = (
-        ('УСПЕШНО', 'УСПЕШНО'),
-        ('НЕ УСПЕШНО', 'НЕ УСПЕШНО'),
+        ('STATUS_OK', 'УСПЕШНО'),
+        ('STATUS_FAILED', 'НЕ УСПЕШНО'),
     )
 
-    created_time = models.DateTimeField(auto_now_add=True, verbose_name='дата и время последней попытки')
-    log_status = models.CharField(max_length=20, choices=STATUS_ATTEMPT, verbose_name='статус попытки')
-    log_emailing = models.ForeignKey(Emailing, on_delete=models.CASCADE, verbose_name='рассылка')
-    response = models.TextField(**NULLABLE, verbose_name='ответ сервера')
+    last_try = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата последней попытки", **NULLABLE
+    )
+    client = models.ForeignKey(
+        Client, on_delete=models.SET_NULL, verbose_name="Клиент", **NULLABLE
+    )
+    settings = models.ForeignKey(
+        Emailing, on_delete=models.SET_NULL, verbose_name="Настройки", **NULLABLE
+    )
 
-    def __str__(self):
-        return f"Статус: {self.log_status} Время: {self.created_time} Ответ сервера: {self.response}"
+    log_status = models.CharField(max_length=20, choices=STATUS_ATTEMPT, default=STATUS_OK,
+                                  verbose_name='статус попытки')
+    response = models.CharField(max_length=350, **NULLABLE, verbose_name='ответ сервера')
 
     class Meta:
-        verbose_name = 'лог'
-        verbose_name_plural = 'логи'
+        verbose_name = 'попытка рассылки'
+        verbose_name_plural = 'попытки рассылки'
