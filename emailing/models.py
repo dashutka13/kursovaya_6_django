@@ -59,7 +59,7 @@ class Emailing(models.Model):
     )
 
     title = models.CharField(max_length=100, verbose_name='название рассылки', unique=True, **NULLABLE)
-    start_time = models.DateTimeField(verbose_name="Время начала", **NULLABLE)
+    start_time = models.DateTimeField(verbose_name="Время начала")
     end_time = models.DateTimeField(verbose_name="Время завершения", **NULLABLE)
     send_periodicity = models.CharField(choices=PERIODS, default=PERIOD_DAILY, verbose_name='периодичность')
     emailing_status = models.CharField(choices=STATUSES, default=STATUS_CREATED, verbose_name='статус')
@@ -67,6 +67,7 @@ class Emailing(models.Model):
     message = models.ForeignKey(Messages, on_delete=models.SET_NULL, **NULLABLE)
     emailing_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='владелец',
                                        null=True)
+    is_active = models.BooleanField(default=True, verbose_name="статус активности")
 
     def __str__(self):
         return f'Рассылка {self.title} в {self.start_time} ({self.send_periodicity})'
